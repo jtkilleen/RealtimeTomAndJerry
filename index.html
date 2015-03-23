@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+    </style>
+  </head>
+  <body onload="setup()">
+    <canvas id="a" width="500" height="375">Your browser doesn't support Canvas</canvas>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+
+    function setup()
+      {
+
+        var canvas = document.getElementById('a');
+            var context = canvas.getContext('2d');
+            var raf;
+            var cat = new Image();
+          //   context.beginPath();
+          // context.moveTo(50, 100);
+          // context.lineTo(260, 50);
+          // context.stroke();
+          // context.closePath();
+            cat.src = 'public/img/cat.png';
+        //     context.textBaseline = "top";
+        //     context.font="25px Cyprus";
+        // context.fillText("This is a line", 215, 100);
+
+        // https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Advanced_animations
+
+        // var ball = {
+        //   x: 30,
+        //   y: 30,
+        //   vx: 8,
+        //   vy: 1,
+        //   radius: 25,
+        //   color: 'blue',
+        //   draw: function() {
+        //     context.beginPath();
+        //     context.arc(this.x, this.y, this.radius,0, Math.PI*2, true);
+        //     context.closePath();
+        //     context.fillStyle = this.color;
+        //     context.fill();
+        //   }
+        // };
+
+        var counter = 1.0;
+        var width = 100;
+        var height = 100;
+        var mult = true;
+        var kitten = {
+          x: 30,
+          y: 30,
+          vx: 0,
+          vy: 0,
+          draw: function() {
+            context.drawImage(cat, this.x, this.y, width/counter, height/counter);
+            context.restore();
+          }
+        };
+
+        var clicked = false;
+        var canvHeight = 375;
+        var canvWidth = 500;
+
+        // kitten.draw();
+        raf = window.requestAnimationFrame(draw);
+
+        function draw() {
+          context.clearRect(0,0, canvas.width, canvas.height);
+          kitten.draw();
+          kitten.x += kitten.vx;
+          kitten.y += kitten.vy;
+          
+          raf = window.requestAnimationFrame(draw);
+        }
+
+        canvas.addEventListener('mouseover', function() {
+          raf = window.requestAnimationFrame(draw);
+        });
+
+        canvas.addEventListener('mouseout', function() {
+          window.cancelAnimationFrame(raf);
+        });
+
+        window.addEventListener( "keydown", doKeyDown, true);
+        var socket = io();
+
+        function doKeyDown(e)
+        {
+          var eve = {
+            x: kitten.x,
+            y: kitten.y,
+            key: e.keyCode
+          }
+          socket.emit('movement', eve)
+          // if(e.keyCode == 87)
+          // {
+          //   kitten.y -= 10;
+          // }
+          // if(e.keyCode == 68)
+          // {
+          //   kitten.x += 10;
+          // }
+          // if(e.keyCode == 65)
+          // {
+          //   kitten.x -= 10;
+          // }
+          // if(e.keyCode == 83)
+          // {
+          //   kitten.y += 10;
+          // }
+        }
+
+        socket.on('movement', function(out){
+          var msg = out.key;
+          kitten.x = out.x;
+          kitten.y = out.y;
+          if(msg == 87)
+          {
+            kitten.y -= 10;
+          }
+          if(msg == 68)
+          {
+            kitten.x += 10;
+          }
+          if(msg == 65)
+          {
+            kitten.x -= 10;
+          }
+          if(msg == 83)
+          {
+            kitten.y += 10;
+          }
+
+          kitten.draw();
+        });
+
+
+      }
+
+    </script>
+  </body>
+</html>

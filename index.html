@@ -55,6 +55,8 @@
         // };
 
         var counter = 1.0;
+        var currentX = 30;
+        var currentY = 30;
         var width = 100;
         var height = 100;
         var mult = true;
@@ -99,8 +101,8 @@
         function doKeyDown(e)
         {
           var eve = {
-            x: kitten.x,
-            y: kitten.y,
+            x: currentX,
+            y: currentY,
             key: e.keyCode
           }
           socket.emit('movement', eve)
@@ -124,23 +126,27 @@
 
         socket.on('movement', function(out){
           var msg = out.key;
-          kitten.x = out.x;
-          kitten.y = out.y;
+          kitten.x = currentX;
+          kitten.y = currentY;
           if(msg == 87)
           {
             kitten.y -= 10;
+            currentY = kitten.y;
           }
           if(msg == 68)
           {
             kitten.x += 10;
+            currentX = kitten.x;
           }
           if(msg == 65)
           {
             kitten.x -= 10;
+            currentX = kitten.x;
           }
           if(msg == 83)
           {
             kitten.y += 10;
+            currentY = kitten.y;
           }
 
           kitten.draw();

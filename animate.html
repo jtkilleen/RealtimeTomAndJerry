@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Load the Paper.js library -->
+<script type="text/javascript" src="public/js/paper.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<!-- Define inlined PaperScript associate it with myCanvas -->
+<script type="text/paperscript" canvas="myCanvas">
+// http://paperjs.org/tutorials/interaction/keyboard-interaction/#modifier-keys
+	// The starting position of the line
+
+	var text = new PointText(new Point(30, 30));
+	text.fillColor = 'black';
+
+	// Set the content of the text item:
+	text.content = 'Type w,a,s,d to create object and then animate!';
+	var position = new Point(100, 100);
+
+	// The amount we will move when one of the keys is pressed:
+	var step = 20;
+	var sides = 0;
+	var path = new Path();
+	path.strokeColor = 'black';
+	path.add(position);
+
+	function onMouseDown(event) {
+		if(sides < 20)
+		{
+			path.add(event.point);
+			position.x = event.point.x;
+			position.y = event.point.y;
+			sides += 1;
+		}
+		else
+		{
+			path.closed = true;
+			// http://www.paulirish.com/2009/random-hex-color-code-snippets/ Generate random hex color
+			path.fillColor = '#'+Math.floor(Math.random()*16777215).toString(16);
+			sides++;
+		}
+	}
+
+	function onKeyDown(event) {
+		// draw sides of shape using arrow keys
+		if(sides < 20)
+		{
+			if(event.key == 'a') {
+				position.x -= step;
+			}
+
+			if(event.key == 'd') {
+				position.x += step;
+			}
+
+			if(event.key == 'w') {
+				position.y -= step;
+			}
+
+			if(event.key == 's') {
+				position.y += step;
+			}
+			path.add(position);
+			sides += 1;
+		}
+		else
+		{
+			path.closed = true;
+			// http://www.paulirish.com/2009/random-hex-color-code-snippets/ Generate random hex color
+			path.fillColor = '#'+Math.floor(Math.random()*16777215).toString(16);
+			sides++;
+		}
+		
+	}
+
+	var destination = Point.random() * view.size;
+	var rotation = -.5;
+	function onFrame(event)
+	{
+		if(sides > 20)
+		{
+			var vector = destination - path.position;
+			path.position += vector / 60;
+			// rotates shape by .5 degrees every frame
+			// 60 frames a second so 30 degrees a second
+			// ~ 12 second animation
+			if (vector.length < 10) {
+				path.fillColor = '#'+Math.floor(Math.random()*16777215).toString(16);
+				destination = Point.random() * view.size;
+				rotation*= -1;
+			}
+			path.rotate(rotation, path.position);
+		}
+	}
+
+</script>
+</head>
+<body>
+	<canvas id="myCanvas" resize height="500px" width="500px"></canvas>
+</body>
+</html>

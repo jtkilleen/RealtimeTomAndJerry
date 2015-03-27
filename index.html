@@ -96,6 +96,7 @@
         window.addEventListener( "keydown", doKeyDown, true);
         var socket = io();
 
+        
         function doKeyDown(e)
         {
           var eve = {
@@ -104,22 +105,6 @@
             key: e.keyCode
           }
           socket.emit('movement', eve)
-          // if(e.keyCode == 87)
-          // {
-          //   kitten.y -= 10;
-          // }
-          // if(e.keyCode == 68)
-          // {
-          //   kitten.x += 10;
-          // }
-          // if(e.keyCode == 65)
-          // {
-          //   kitten.x -= 10;
-          // }
-          // if(e.keyCode == 83)
-          // {
-          //   kitten.y += 10;
-          // }
         }
 
         socket.on('movement', function(out){

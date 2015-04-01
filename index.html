@@ -60,6 +60,8 @@
           // context.stroke();
           // context.closePath();
             cat.src = 'public/img/cat.png';
+            var mouse = new Image();
+            mouse.src= 'public/img/jerry.png';
         //     context.textBaseline = "top";
         //     context.font="25px Cyprus";
         // context.fillText("This is a line", 215, 100);
@@ -98,17 +100,29 @@
             context.restore();
           }
         };
+        var jerry = {
+          x: 50,
+          y: 50,
+          vx: 0,
+          vy: 0,
+          draw: function() {
+            context.drawImage(mouse, this.x, this.y, 400/3, 194/3);
+            context.restore();
+          }
+        }
 
         var clicked = false;
         var canvHeight = 375;
         var canvWidth = 500;
 
         // kitten.draw();
+        
         raf = window.requestAnimationFrame(draw);
 
         function draw() {
           context.clearRect(0,0, canvas.width, canvas.height);
           kitten.draw();
+          jerry.draw();
           kitten.x += kitten.vx;
           kitten.y += kitten.vy;
           

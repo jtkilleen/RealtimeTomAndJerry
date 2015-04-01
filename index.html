@@ -36,7 +36,8 @@
     <canvas id="a" width="500" height="375">Your browser doesn't support Canvas</canvas>
   </div>
   <div class ="col s2">
-    Current command: <div id ="next"/>
+    Current command: <p id ="current"> </p><br><br>
+    Next command: <p id ="next"> </p><br><br>
   </div>
   <!--
   <div class ="col s3">
@@ -159,28 +160,47 @@
           {
             kitten.y -= 10;
             currentY = kitten.y;
-            $('#next').text("Up");
+            $('#current').text("Up");
           }
           if(msg == 68)
           {
             kitten.x += 10;
             currentX = kitten.x;
-            $('#next').text("Right");
+            $('#current').text("Right");
           }
           if(msg == 65)
           {
             kitten.x -= 10;
             currentX = kitten.x;
-            $('#next').text("Left");
+            $('#current').text("Left");
           }
           if(msg == 83)
           {
             kitten.y += 10;
             currentY = kitten.y;
-            $('#next').text("Down");
+            $('#current').text("Down");
           }
 
           kitten.draw();
+        });
+
+        socket.on('lookahead', function(out){
+          if (out == "nothing"){
+            $('#next').text("None")   
+          }
+          else if (out.key == 87){
+            $('#next').text("Up") 
+          }
+          else if (out.key == 68){
+            $('#next').text("Right") 
+          }
+          else if (out.key == 65){
+            $('#next').text("Left") 
+          }
+          else if (out.key == 83){
+            $('#next').text("Down") 
+          }
+
         });
 
 

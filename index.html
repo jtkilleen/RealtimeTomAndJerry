@@ -83,6 +83,7 @@
         //     context.fill();
         //   }
         // };
+        var socket = io();
 
         var counter = 1.0;
         var currentX = 30;
@@ -111,6 +112,13 @@
           }
         }
 
+        socket.on('start', function(cat) {
+          currentX = cat.x;
+          currentY = cat.y;
+          kitten.x = cat.x;
+          kitten.y = cat.y;
+        });
+
         var clicked = false;
         var canvHeight = 375;
         var canvWidth = 500;
@@ -138,7 +146,7 @@
         });
 
         window.addEventListener( "keydown", doKeyDown, true);
-        var socket = io();
+        
 
         
         function doKeyDown(e)

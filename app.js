@@ -49,9 +49,12 @@ var queue = new Queue();
 	});
 
 	io.on('connection', function(socket) {
+		socket.emit('start', cat);
 		socket.on('movement', function(msg){
 			//io.emit('movement', msg);
 			queue.enqueue(msg)
+			cat.x = msg.x;
+			cat.y = msg.y;
 		});
 	});
 

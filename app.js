@@ -70,5 +70,10 @@ var queue = new Queue();
   			cat.x = msg2.x;
 			cat.y = msg2.y;
   			io.emit('movement', msg2)
+  			if (queue.peek() != undefined){
+  				io.emit('lookahead', queue.peek());
+  			} else{
+  				io.emit('lookahead', "nothing");
+  			}
   		}
-	}, 10);
+	}, 100);

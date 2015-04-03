@@ -53,8 +53,26 @@ var queue = new Queue();
 		socket.on('movement', function(msg){
 			//io.emit('movement', msg);
 			queue.enqueue(msg)
-			cat.x = msg.x;
-			cat.y = msg.y;
+
+			// cat.x = msg.x;
+			// cat.y = msg.y;
+			if(msg.keycode == 87)
+          	{
+          	 cat.y = msg.y - 10;
+     
+          	}
+          	if(msg.keycode == 68)
+          	{
+          	  kitten.x = msg.x + 10;
+          	}
+          	if(msg.keycode == 65)
+          	{
+          	  cat.x = msg.x - 10;
+          	}
+          	if(msg.keycode == 83)
+          	{
+          	  cat.y = msg.y + 10;
+          	}
 		});
 	});
 
@@ -69,6 +87,23 @@ var queue = new Queue();
    			console.log(msg2);
   			cat.x = msg2.x;
 			cat.y = msg2.y;
+			if(msg2.keycode == 87)
+          	{
+          	 cat.y = msg2.y - 10;
+     
+          	}
+          	if(msg2.keycode == 68)
+          	{
+          	  kitten.x = msg2.x + 10;
+          	}
+          	if(msg2.keycode == 65)
+          	{
+          	  cat.x = msg2.x - 10;
+          	}
+          	if(msg2.keycode == 83)
+          	{
+          	  cat.y = msg2.y + 10;
+          	}
   			io.emit('movement', msg2)
   			if (queue.peek() != undefined){
   				io.emit('lookahead', queue.peek());

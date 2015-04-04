@@ -90,7 +90,8 @@ var players = [];
 		socket.on('disconnect', function() {
 			console.log("disconnect");
 			var i = players.indexOf(socket);
-			players.splice(1,i);
+			console.log(i);
+			players = players.splice(1,i);
 			io.emit('playerLeft', i);
 		});
 	});

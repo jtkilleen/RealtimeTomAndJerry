@@ -1,51 +1,69 @@
-<!doctype html>
-<html>
-  <head>
-    <title>Socket.IO chat</title>
-    <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-      #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages li { padding: 5px 10px; }
-      #messages li:nth-child(odd) { background: #eee; }
-    </style>
-  </head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>WebDev II Node.js</title>
+
+  <!-- Mobile Specific Meta
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Font
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/skeleton.css">
+
+</head>
+
   <body onload="setup()">
+
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.95.3/css/materialize.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.95.3/js/materialize.min.js"></script>
-      <nav>
-    <div class="nav-wrapper">
-      <a href="#" class="brand-logo right">Logo</a>
-      <ul id="nav-mobile" class="left hide-on-med-and-down">
-        <li><a href="sass.html">Sass</a></li>
-        <li><a href="components.html">Components</a></li>
-        <li><a href="javascript.html">JavaScript</a></li>
-      </ul>
-    </div>
-  </nav>
 
   <div class ="container">
-      <h1>
-    TwitchPlaysCat
-  </h1>
-  <div class = "row">
-    <div class ="col s7">
-    <canvas id="a" width="500" height="375">Your browser doesn't support Canvas</canvas>
+
+    <div class = "row">
+
+      <div class ="six columns" style="margin-top:5%;">
+        <h1>Tom & Jerry Chase</h1>
+        <canvas id="a" width="500" height="375">Your browser doesn't support Canvas</canvas>
+      </div>
+    
+      <div class ="six columns" style="margin-top:13%">
+        Current command: <p id ="current"> </p>
+        Next command: <p id ="next"> </p>
+
+        <hr>
+
+        <h3>Chat</h3>
+
+        <ul id="messages"></ul>
+
+        <form action="">
+          <input id="m" autocomplete="off" type="text" style="display:inline"/> <button class="button-primary" style="display:inline">Send</button>
+        </form>
+
+      </div>
+
+    </div>
+
   </div>
-  <div class ="col s2">
-    Current command: <p id ="current"> </p><br><br>
-    Next command: <p id ="next"> </p><br><br>
-  </div>
-  <!--
-  <div class ="col s3">
-    Chat goes here.
-  </div>
--->
-</div>
+
+
+    <!-- Socket.io
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->  
+
     <script src="/socket.io/socket.io.js"></script>
+
+    <!-- setup()
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->      
+
     <script>
 
     function setup()
@@ -267,6 +285,22 @@
       }
 
     </script>
-  </div>
+
+    <script>
+
+      var socket = io();
+      $('form').submit(function(){
+        socket.emit('chat message', $('#m').val());
+        $('#m').val('');
+        return false;
+      });
+      socket.on('chat message', function(msg){
+        $('#messages').append($('<li>').text(msg));
+      });
+
+    </script>
+
   </body>
+
 </html>
+

@@ -28,6 +28,12 @@ connection.query('SELECT * from accounts', function(err, rows, fields) {
 
 connection.end();*/
 
+io.on('connection', function(socket){
+  socket.on('chat message', function(msg){
+    io.emit('chat message', msg);
+  });
+});
+
 app.use('/public', express.static(__dirname + "/public"));
 
 //code.stephenmorley.org

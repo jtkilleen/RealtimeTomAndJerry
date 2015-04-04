@@ -38,7 +38,14 @@ var cat = {
 	y: 30
 };
 
+var mouse = {
+	x: 50,
+	y: 50
+};
+
 var queue = new Queue();
+var mousequeue = new Queue();
+var players = [];
 
     app.get('/', function (req, res) {
 	    res.sendFile(__dirname + '/index.html')
@@ -49,66 +56,120 @@ var queue = new Queue();
 	});
 
 	io.on('connection', function(socket) {
-		socket.emit('start', cat);
+		players.push(socket);
+		var startmsg = {
+			cat: cat,
+			mouse: mouse
+		}
+		socket.emit('start', startmsg);
+		console.log(players.indexOf(socket));
+		socket.emit('getPlayerId', players.indexOf(socket));
 		socket.on('movement', function(msg){
-			//io.emit('movement', msg);
-			queue.enqueue(msg)
+			if(msg.playerid == 0)
+			{
+				mousequeue.enqueue(msg)
+				// if(msg.keycode == 87)
+		  //     	{
+		  //     	 cat.y = msg.y - 10;
+		 
+		  //     	}
+		  //     	if(msg.keycode == 68)
+		  //     	{
+		  //     	  cat.x = msg.x + 10;
+		  //     	}
+		  //     	if(msg.keycode == 65)
+		  //     	{
+		  //     	  cat.x = msg.x - 10;
+		  //     	}
+		  //     	if(msg.keycode == 83)
+		  //     	{
+		  //     	  cat.y = msg.y + 10;
+		  //     	}
+			}
+			else
+			{
+				queue.enqueue(msg);
+			}
+		});
 
-			// cat.x = msg.x;
-			// cat.y = msg.y;
-			if(msg.keycode == 87)
-          	{
-          	 cat.y = msg.y - 10;
-     
-          	}
-          	if(msg.keycode == 68)
-          	{
-          	  kitten.x = msg.x + 10;
-          	}
-          	if(msg.keycode == 65)
-          	{
-          	  cat.x = msg.x - 10;
-          	}
-          	if(msg.keycode == 83)
-          	{
-          	  cat.y = msg.y + 10;
-          	}
+		socket.on('disconnect', function() {
+			console.log("disconnect");
+			var i = players.indexOf(socket);
+			players.splice(1,i);
+			io.emit('playerLeft', i);
 		});
 	});
 
-	http.listen(3000, function() {
-		console.log('listening on *:3000');
-	});
+http.listen(3000, function() {
+	console.log('listening on *:3000');
+});
 
-	
-	setInterval(function(){
-  		if (queue.peek() != undefined){
-  			var msg2 = queue.dequeue();
-   			console.log(msg2);
-  			cat.x = msg2.x;
+
+setInterval(function(){
+		if (queue.peek() != undefined){
+			var msg2 = queue.dequeue();
+			console.log(msg2);
+			cat.x = msg2.x;
 			cat.y = msg2.y;
-			if(msg2.keycode == 87)
-          	{
-          	 cat.y = msg2.y - 10;
-     
-          	}
-          	if(msg2.keycode == 68)
-          	{
-          	  kitten.x = msg2.x + 10;
-          	}
-          	if(msg2.keycode == 65)
-          	{
-          	  cat.x = msg2.x - 10;
-          	}
-          	if(msg2.keycode == 83)
-          	{
-          	  cat.y = msg2.y + 10;
-          	}
-  			io.emit('movement', msg2)
-  			if (queue.peek() != undefined){
-  				io.emit('lookahead', queue.peek());
-  			} else{
-  				io.emit('lookahead', "nothing");
-  			}
-  		}
-	}, 100);
+			if(msg2.key == 87)
+	      	{
+	      	 cat.y = msg2.y - 10;
+	      	}
+	      	if(msg2.key == 68)
+	      	{
+	      	  cat.x = msg2.x + 10;
+	      	}
+	      	if(msg2.key == 65)
+	      	{
+	      	  cat.x = msg2.x - 10;
+	      	}
+	      	if(msg2.key == 83)
+	      	{
+	      	  cat.y = msg2.y + 10;
+	      	}
+	      	console.log(cat);
+	      	var newmsg = {
+	      		cat: cat,
+	      		key: msg2.key
+	      	};
+			io.emit('movement', newmsg)
+			if (queue.peek() != undefined){
+				io.emit('lookahead', queue.peek());
+			} else{
+				io.emit('lookahead', "nothing");
+			}
+		}
+		if (mousequeue.peek() != undefined){
+			var msg2 = mousequeue.dequeue();
+			console.log(msg2);
+			mouse.x = msg2.x;
+			mouse.y = msg2.y;
+			if(msg2.key == 87)
+	      	{
+	      	 mouse.y = msg2.y - 10;
+	      	}
+	      	if(msg2.key == 68)
+	      	{
+	      	  mouse.x = msg2.x + 10;
+	      	}
+	      	if(msg2.key == 65)
+	      	{
+	      	  mouse.x = msg2.x - 10;
+	      	}
+	      	if(msg2.key == 83)
+	      	{
+	      	  mouse.y = msg2.y + 10;
+	      	}
+	      	console.log(mouse);
+	      	var newmsg = {
+	      		mouse: mouse,
+	      		key: msg2.key
+	      	};
+			io.emit('mouseMovement', newmsg)
+			if (mousequeue.peek() != undefined){
+				io.emit('lookahead', mousequeue.peek());
+			} else{
+				io.emit('lookahead', "nothing");
+			}
+		}
+}, 100);

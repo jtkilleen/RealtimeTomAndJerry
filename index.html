@@ -85,7 +85,7 @@
         //   }
         // };
         var socket = io();
-
+        var playerid;
         var counter = 1.0;
         var currentX = 30;
         var currentY = 30;
@@ -113,11 +113,13 @@
           }
         }
 
-        socket.on('start', function(cat) {
-          currentX = cat.x;
-          currentY = cat.y;
-          kitten.x = cat.x;
-          kitten.y = cat.y;
+        socket.on('start', function(start) {
+          currentX = start.cat.x;
+          currentY = start.cat.y;
+          kitten.x = start.cat.x;
+          kitten.y = start.cat.y;
+          jerry.x = start.mouse.x;
+          jerry.y = start.mouse.y;
         });
 
         var clicked = false;
@@ -149,48 +151,98 @@
         window.addEventListener( "keydown", doKeyDown, true);
         
 
-        
+        socket.on('getPlayerId', function(id){
+          playerid = id;
+        });
+
+        socket.on('playerLeft', function(id) {
+          if(playerid > id) {
+            playerid--;
+          }
+          console.log(playerid);
+        });
         function doKeyDown(e)
         {
           var eve = {
-            x: currentX,
-            y: currentY,
-            key: e.keyCode
+            x: jerry.x,
+            y: jerry.y,
+            key: e.keyCode,
+            playerid: playerid
+          }
+          if(playerid != 0)
+          {
+            eve.x = currentX;
+            eve.y = currentY;
           }
           socket.emit('movement', eve)
         }
 
         socket.on('movement', function(out){
           var msg = out.key;
-          kitten.x = currentX;
-          kitten.y = currentY;
+          kitten.x = out.cat.x;
+          kitten.y = out.cat.y;
+          currentX = out.cat.x;
+          currentY = out.cat.y;
           if(msg == 87)
           {
-            kitten.y -= 10;
-            currentY = kitten.y;
+            // kitten.y -= 10;
+            // currentY = kitten.y;
             $('#current').text("Up");
           }
           if(msg == 68)
           {
-            kitten.x += 10;
-            currentX = kitten.x;
+            // kitten.x += 10;
+            // currentX = kitten.x;
             $('#current').text("Right");
           }
           if(msg == 65)
           {
-            kitten.x -= 10;
-            currentX = kitten.x;
+            // kitten.x -= 10;
+            // currentX = kitten.x;
             $('#current').text("Left");
           }
           if(msg == 83)
           {
-            kitten.y += 10;
-            currentY = kitten.y;
+            // kitten.y += 10;
+            // currentY = kitten.y;
             $('#current').text("Down");
           }
 
           kitten.draw();
         });
+
+        socket.on('mouseMovement', function(out){
+          var msg = out.key;
+          jerry.x = out.mouse.x;
+          jerry.y = out.mouse.y;
+          if(msg == 87)
+          {
+            // kitten.y -= 10;
+            // currentY = kitten.y;
+            $('#current').text("Up");
+          }
+          if(msg == 68)
+          {
+            // kitten.x += 10;
+            // currentX = kitten.x;
+            $('#current').text("Right");
+          }
+          if(msg == 65)
+          {
+            // kitten.x -= 10;
+            // currentX = kitten.x;
+            $('#current').text("Left");
+          }
+          if(msg == 83)
+          {
+            // kitten.y += 10;
+            // currentY = kitten.y;
+            $('#current').text("Down");
+          }
+
+          jerry.draw();
+        });
+
 
         socket.on('lookahead', function(out){
           if (out == "nothing"){

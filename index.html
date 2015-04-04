@@ -32,7 +32,7 @@
 
       <div class ="six columns" style="margin-top:5%;">
         <h1>Tom & Jerry Chase</h1>
-        <canvas id="a" width="500" height="375">Your browser doesn't support Canvas</canvas>
+        <canvas id="a" width="500" height="375" tabeindex='1'>Your browser doesn't support Canvas</canvas>
       </div>
     
       <div class ="six columns" style="margin-top:13%">
@@ -110,6 +110,10 @@
         var width = 100;
         var height = 100;
         var mult = true;
+        var kittysizewidth = 500/2;
+        var kittysizeheight = 360/2;
+        var jerrysizewidth = 400/3;
+        var jerrysizeheight = 194/3;
         var kitten = {
           x: 30,
           y: 30,
@@ -154,7 +158,14 @@
           jerry.draw();
           kitten.x += kitten.vx;
           kitten.y += kitten.vy;
-          
+          context.beginPath();
+          context.moveTo(kitten.x + kittysizewidth, kitten.y + kittysizeheight/3);
+          context.lineTo(jerry.x + jerrysizewidth/2, jerry.y + jerrysizeheight/2);
+          context.stroke();
+          if(Math.sqrt(Math.pow((kitten.x + kittysizewidth - jerry.x - jerrysizewidth/2),2)+Math.pow((kitten.y + kittysizeheight/3 - jerry.y - jerrysizeheight/2),2)) < 10)
+          {
+            socket.emit("GAMEOVER");
+          }
           raf = window.requestAnimationFrame(draw);
         }
 

@@ -75,29 +75,17 @@ var players = [];
 			if(msg.playerid == 0)
 			{
 				mousequeue.enqueue(msg)
-				// if(msg.keycode == 87)
-		  //     	{
-		  //     	 cat.y = msg.y - 10;
-		 
-		  //     	}
-		  //     	if(msg.keycode == 68)
-		  //     	{
-		  //     	  cat.x = msg.x + 10;
-		  //     	}
-		  //     	if(msg.keycode == 65)
-		  //     	{
-		  //     	  cat.x = msg.x - 10;
-		  //     	}
-		  //     	if(msg.keycode == 83)
-		  //     	{
-		  //     	  cat.y = msg.y + 10;
-		  //     	}
 			}
 			else
 			{
 				queue.enqueue(msg);
 			}
 		});
+
+		socket.on('GAMEOVER', function()
+		{
+			console.log("GAME OVER!");
+		})
 
 		socket.on('disconnect', function() {
 			console.log("disconnect");
@@ -134,6 +122,22 @@ setInterval(function(){
 	      	{
 	      	  cat.y = msg2.y + 10;
 	      	}
+	      	if(cat.x > 500)
+	      	{
+	      		cat.x = -75;
+	      	}
+	      	else if(cat.x < -75)
+	      	{
+	      		cat.x = 500
+	      	}
+	      	if(cat.y < -75)
+	      	{
+	      		cat.y = 375
+	      	}
+	      	else if(cat.y > 375)
+	      	{
+	      		cat.y = -75;
+	      	}
 	      	console.log(cat);
 	      	var newmsg = {
 	      		cat: cat,
@@ -167,6 +171,22 @@ setInterval(function(){
 	      	{
 	      	  mouse.y = msg2.y + 10;
 	      	}
+	      	if(mouse.x > 500)
+	      	{
+	      		mouse.x = -75;
+	      	}
+	      	else if(mouse.x < -75)
+	      	{
+	      		mouse.x = 500
+	      	}
+	      	if(mouse.y < -75)
+	      	{
+	      		mouse.y = 375
+	      	}
+	      	else if(mouse.y > 375)
+	      	{
+	      		mouse.y = -75;
+	      	}
 	      	console.log(mouse);
 	      	var newmsg = {
 	      		mouse: mouse,
@@ -179,4 +199,4 @@ setInterval(function(){
 				io.emit('lookahead', "nothing");
 			}
 		}
-}, 100);
+}, 10);

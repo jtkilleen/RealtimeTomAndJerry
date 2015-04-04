@@ -68,7 +68,7 @@
 
     function setup()
       {
-        $('#a').css('background-color', 'rgba(158, 167, 184, 0.2)');
+        $('#a').css('background-color', 'rgb(255, 255, 255)');
         var canvas = document.getElementById('a');
             var context = canvas.getContext('2d');
             var raf;
@@ -116,7 +116,7 @@
           vx: 0,
           vy: 0,
           draw: function() {
-            context.drawImage(cat, this.x, this.y, width/counter, height/counter);
+            context.drawImage(cat, this.x, this.y, 500/2, 360/2);
             context.restore();
           }
         };

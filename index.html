@@ -42,11 +42,14 @@
         <hr>
 
         <h3>Chat</h3>
-
+        <div class = "scroll">
         <ul id="messages"></ul>
+        </div>
 
+        <hr>
         <form action="">
-          <input id="m" autocomplete="off" type="text" style="display:inline"/> <button class="button-primary" style="display:inline">Send</button>
+          <input id="username" autocomplete="off" type="text" style="display:inline" placeholder = "Username"/>
+          <input id="m" autocomplete="off" type="text" style="display:inline" placeholder = "Message"/> <button class="button-primary" style="display:inline">Send</button>
         </form>
 
       </div>
@@ -306,7 +309,9 @@
         return false;
       });
       socket.on('chat message', function(msg){
-        $('#messages').append($('<li>').text(msg));
+        var userName = $('#username').val();
+        var completeMessage = userName + ": " + msg;
+        $('#messages').append($('<li>').text(completeMessage));
       });
 
     </script>

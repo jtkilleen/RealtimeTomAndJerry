@@ -6,6 +6,15 @@
  *    user zoom.
  */
 
+div.scroll {
+    /*background-color: #00FFFF;*/
+    /*width: 100px;*/
+    
+    height: 200px;
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
 html {
   font-family: sans-serif; /* 1 */
   -ms-text-size-adjust: 100%; /* 2 */

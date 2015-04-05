@@ -84,7 +84,14 @@ var players = [];
 
 		socket.on('GAMEOVER', function()
 		{
-			console.log("GAME OVER!");
+			console.log("GAME OVER - TOM WINS!");
+			io.emit('clearCanvas', "Tom");
+		})
+
+		socket.on('GAMEOVERJERRY', function()
+		{
+			console.log("GAME OVER - JERRY WINS!");
+			io.emit('clearCanvas', "Jerry");
 		})
 
 		socket.on('disconnect', function() {

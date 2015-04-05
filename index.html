@@ -32,12 +32,13 @@
 
       <div class ="six columns" style="margin-top:5%;">
         <h1>Tom & Jerry Chase</h1>
+        <p id = "Timer" style="display:inline">120 Seconds</p> until Jerry wins!
         <canvas id="a" width="500" height="375" tabeindex='1'>Your browser doesn't support Canvas</canvas>
       </div>
     
       <div class ="six columns" style="margin-top:13%">
-        Current command: <p id ="current"> </p>
-        Next command: <p id ="next"> </p>
+        Current command: <p id ="current">None</p>
+        Next command: <p id ="next">None</p>
 
         <hr>
 
@@ -295,8 +296,22 @@
 
         });
 
+        socket.on('clearCanvas', function(winner){
+          context.clearRect(0,0, canvas.width, canvas.height);
+          context.stroke();
+          context.restore();        
+        });
 
       }
+
+      var start = new Date;
+      setInterval(function() {
+          var secondsLeft = 121 - ((new Date - start) / 1000);
+          $('#Timer').text(parseInt(secondsLeft) + " Seconds");
+          if (secondsLeft <= 0){
+            socket.emit("GAMEOVERJERRY");
+          }
+      }, 1000);
 
     </script>
 

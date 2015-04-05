@@ -88,12 +88,6 @@ var players = [];
 			io.emit('clearCanvas', "Tom");
 		})
 
-		socket.on('GAMEOVERJERRY', function()
-		{
-			console.log("GAME OVER - JERRY WINS!");
-			io.emit('clearCanvas', "Jerry");
-		})
-
 		socket.on('disconnect', function() {
 			console.log("disconnect");
 			var i = players.indexOf(socket);
@@ -107,6 +101,15 @@ http.listen(3000, function() {
 	console.log('listening on *:3000');
 });
 
+var start = new Date;
+setInterval(function() {
+  var secondsLeft = 121 - ((new Date - start) / 1000);
+  io.emit('updateTimer', secondsLeft);
+  if (secondsLeft <= 0){
+    console.log("GAME OVER - JERRY WINS!");
+	io.emit('clearCanvas', "Jerry");
+  }
+}, 1000);
 
 setInterval(function(){
 		if (queue.peek() != undefined){

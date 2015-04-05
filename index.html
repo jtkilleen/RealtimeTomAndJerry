@@ -32,7 +32,7 @@
 
       <div class ="six columns" style="margin-top:5%;">
         <h1>Tom & Jerry Chase</h1>
-        <p id = "Timer" style="display:inline">120 Seconds</p> until Jerry wins!
+        <p id = "Timer" style="display:inline"></p>
         <canvas id="a" width="500" height="375" tabeindex='1'>Your browser doesn't support Canvas</canvas>
       </div>
     
@@ -302,16 +302,16 @@
           context.restore();        
         });
 
+        socket.on('updateTimer', function(secondsLeft){
+          if (secondsLeft > 0){
+            $('#Timer').text(parseInt(secondsLeft) + " seconds until Jerry wins!");
+          }
+          else{
+            $('#Timer').text("0 seconds until Jerry wins!");
+          }
+        });
       }
 
-      var start = new Date;
-      setInterval(function() {
-          var secondsLeft = 121 - ((new Date - start) / 1000);
-          $('#Timer').text(parseInt(secondsLeft) + " Seconds");
-          if (secondsLeft <= 0){
-            socket.emit("GAMEOVERJERRY");
-          }
-      }, 1000);
 
     </script>
 

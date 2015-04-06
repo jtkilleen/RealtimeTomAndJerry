@@ -166,11 +166,12 @@
             jerry.draw();
             kitten.x += kitten.vx;
             kitten.y += kitten.vy;
-            context.beginPath();
-            context.moveTo(kitten.x + kittysizewidth, kitten.y + kittysizeheight/3);
-            context.lineTo(jerry.x + jerrysizewidth/2, jerry.y + jerrysizeheight/2);
-            context.stroke();
-            if(Math.sqrt(Math.pow((kitten.x + kittysizewidth - jerry.x - jerrysizewidth/2),2)+Math.pow((kitten.y + kittysizeheight/3 - jerry.y - jerrysizeheight/2),2)) < 10)
+            // THIS DRAWS LINE BETWEEEN MOT's HAND to YRREJ's BODY
+            // context.beginPath();
+            // context.moveTo(kitten.x + kittysizewidth, kitten.y + kittysizeheight/3);
+            // context.lineTo(jerry.x + jerrysizewidth/2, jerry.y + jerrysizeheight/2);
+            // context.stroke();
+            if(Math.sqrt(Math.pow((kitten.x + kittysizewidth - jerry.x - jerrysizewidth/2 - 5),2)+Math.pow((kitten.y + kittysizeheight/3 - jerry.y - jerrysizeheight/2),2)) < 25)
             {
               gameover = true;
               socket.emit("GAMEOVER", 'TOM');

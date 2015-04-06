@@ -156,19 +156,19 @@ setInterval(function(){
 	      	}
 	      	if(cat.x > 500)
 	      	{
-	      		cat.x = -75;
+	      		cat.x = -250;
 	      	}
-	      	else if(cat.x < -75)
+	      	else if(cat.x < -250)
 	      	{
 	      		cat.x = 500
 	      	}
-	      	if(cat.y < -120)
+	      	if(cat.y < -180)
 	      	{
 	      		cat.y = 375
 	      	}
 	      	else if(cat.y > 375)
 	      	{
-	      		cat.y = -120;
+	      		cat.y = -180;
 	      	}
 	      	console.log(cat);
 	      	var newmsg = {
@@ -205,9 +205,9 @@ setInterval(function(){
 	      	}
 	      	if(mouse.x > 500)
 	      	{
-	      		mouse.x = -75;
+	      		mouse.x = -400/3;
 	      	}
-	      	else if(mouse.x < -75)
+	      	else if(mouse.x < -400/3)
 	      	{
 	      		mouse.x = 500
 	      	}

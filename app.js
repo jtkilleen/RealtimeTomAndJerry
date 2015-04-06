@@ -82,10 +82,16 @@ var players = [];
 			}
 		});
 
-		socket.on('GAMEOVER', function()
+		socket.on('GAMEOVER', function(player)
 		{
-			console.log("GAME OVER - TOM WINS!");
-			io.emit('clearCanvas', "Tom");
+			if(player == "TOM")
+			{
+				io.emit('clearCanvas', "TOM");
+			}
+			else
+			{
+				io.emit('clearCanvas', "JERRY");
+			}
 		})
 
 		socket.on('disconnect', function() {
@@ -94,6 +100,19 @@ var players = [];
 			console.log(i);
 			players = players.splice(1,i);
 			io.emit('playerLeft', i);
+		});
+
+		socket.on('RESET', function() {
+			cat.x = 30;
+			cat.y = 30;
+			mouse.x = 50;
+			mouse.y = 50;
+			var startmsg = {
+				cat: cat,
+				mouse: mouse
+			}
+			start = new Date;
+			socket.emit('restart', startmsg);
 		});
 	});
 
@@ -107,7 +126,7 @@ setInterval(function() {
   io.emit('updateTimer', secondsLeft);
   if (secondsLeft <= 0){
     console.log("GAME OVER - JERRY WINS!");
-	io.emit('clearCanvas', "Jerry");
+	io.emit('clearCanvas', "JERRY");
   }
 }, 1000);
 
@@ -141,13 +160,13 @@ setInterval(function(){
 	      	{
 	      		cat.x = 500
 	      	}
-	      	if(cat.y < -75)
+	      	if(cat.y < -120)
 	      	{
 	      		cat.y = 375
 	      	}
 	      	else if(cat.y > 375)
 	      	{
-	      		cat.y = -75;
+	      		cat.y = -120;
 	      	}
 	      	console.log(cat);
 	      	var newmsg = {

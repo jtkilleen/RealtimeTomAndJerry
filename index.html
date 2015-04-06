@@ -107,6 +107,7 @@
         //   }
         // };
         var socket = io();
+        var gameover = false;
         var playerid;
         var counter = 1.0;
         var currentX = 30;
@@ -158,28 +159,64 @@
 
         function draw() {
           context.clearRect(0,0, canvas.width, canvas.height);
-          kitten.draw();
-          jerry.draw();
-          kitten.x += kitten.vx;
-          kitten.y += kitten.vy;
-          context.beginPath();
-          context.moveTo(kitten.x + kittysizewidth, kitten.y + kittysizeheight/3);
-          context.lineTo(jerry.x + jerrysizewidth/2, jerry.y + jerrysizeheight/2);
-          context.stroke();
-          if(Math.sqrt(Math.pow((kitten.x + kittysizewidth - jerry.x - jerrysizewidth/2),2)+Math.pow((kitten.y + kittysizeheight/3 - jerry.y - jerrysizeheight/2),2)) < 10)
+          if(!gameover)
           {
-            socket.emit("GAMEOVER");
+            kitten.draw();
+            jerry.draw();
+            kitten.x += kitten.vx;
+            kitten.y += kitten.vy;
+            context.beginPath();
+            context.moveTo(kitten.x + kittysizewidth, kitten.y + kittysizeheight/3);
+            context.lineTo(jerry.x + jerrysizewidth/2, jerry.y + jerrysizeheight/2);
+            context.stroke();
+            if(Math.sqrt(Math.pow((kitten.x + kittysizewidth - jerry.x - jerrysizewidth/2),2)+Math.pow((kitten.y + kittysizeheight/3 - jerry.y - jerrysizeheight/2),2)) < 10)
+            {
+              gameover = true;
+              socket.emit("GAMEOVER", 'TOM');
+            }
+            else
+            {
+              raf = window.requestAnimationFrame(draw);
+             }
           }
-          raf = window.requestAnimationFrame(draw);
+          
         }
 
-        canvas.addEventListener('mouseover', function() {
-          raf = window.requestAnimationFrame(draw);
+        function drawGameOver(winner) {
+          context.clearRect(0,0, canvas.width, canvas.height);
+            context.font = "48px serif";
+            context.strokeText("GAME OVER", 10, 50);
+            context.strokeText(winner+" WINS", 10, 100);
+
+            //raf = window.requestAnimationFrame(drawGameOver());
+            //setup();
+          
+        }
+
+        socket.on('restart', function(msg)
+        {
+          currentX = msg.cat.x;
+          currentY = msg.cat.y;
+          jerry.x = msg.mouse.x;
+          jerry.y = msg.mouse.y;
+          kitten.x = msg.cat.x;
+          kitten.y = msg.cat.y;
+          location.reload();
         });
 
-        canvas.addEventListener('mouseout', function() {
-          window.cancelAnimationFrame(raf);
+        canvas.addEventListener('click', function() {
+          if(gameover)
+          {
+            gameover = false;
+            socket.emit("RESET");
+            //setup();
+            //location.reload();
+          }
         });
+
+        // canvas.addEventListener('mouseout', function() {
+        //   window.cancelAnimationFrame(raf);
+        // });
 
         window.addEventListener( "keydown", doKeyDown, true);
         
@@ -196,18 +233,22 @@
         });
         function doKeyDown(e)
         {
-          var eve = {
-            x: jerry.x,
-            y: jerry.y,
-            key: e.keyCode,
-            playerid: playerid
+            if(!gameover)
+            {
+              var eve = {
+              x: jerry.x,
+              y: jerry.y,
+              key: e.keyCode,
+              playerid: playerid
+            }
+            if(playerid != 0)
+            {
+              eve.x = currentX;
+              eve.y = currentY;
+            }
+            socket.emit('movement', eve)
           }
-          if(playerid != 0)
-          {
-            eve.x = currentX;
-            eve.y = currentY;
-          }
-          socket.emit('movement', eve)
+          
         }
 
         socket.on('movement', function(out){
@@ -297,17 +338,29 @@
         });
 
         socket.on('clearCanvas', function(winner){
+          gameover = true
           context.clearRect(0,0, canvas.width, canvas.height);
-          context.stroke();
-          context.restore();        
+          context.beginPath();
+            context.font = "48px serif";
+            context.strokeText("GAME OVER", 10, 50);
+            context.strokeText(winner+" WINS", 10, 100);
+            //socket.emit("GAMEOVER", winner)
+            //raf = window.requestAnimationFrame(drawGameOver(winner));
         });
 
         socket.on('updateTimer', function(secondsLeft){
-          if (secondsLeft > 0){
-            $('#Timer').text(parseInt(secondsLeft) + " seconds until Jerry wins!");
+          if(!gameover)
+          {
+            if (secondsLeft > 0){
+              $('#Timer').text(parseInt(secondsLeft) + " seconds until Jerry wins!");
+            }
+            else{
+              $('#Timer').text("0 seconds until Jerry wins!");
+            }
           }
-          else{
-            $('#Timer').text("0 seconds until Jerry wins!");
+          else
+          {
+            $('#Timer').text("GAME OVER");
           }
         });
       }

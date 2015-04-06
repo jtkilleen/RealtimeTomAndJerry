@@ -64,6 +64,7 @@ var players = [];
 
 	io.on('connection', function(socket) {
 		players.push(socket);
+		io.emit("playerCountUpdate", players.length);
 		var startmsg = {
 			cat: cat,
 			mouse: mouse
@@ -99,6 +100,7 @@ var players = [];
 			var i = players.indexOf(socket);
 			console.log(i);
 			players = players.splice(1,i);
+			io.emit("playerCountUpdate", players.length);
 			io.emit('playerLeft', i);
 		});
 

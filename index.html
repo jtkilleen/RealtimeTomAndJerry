@@ -34,6 +34,7 @@
         <h1>Tom & Jerry Chase</h1>
         <p id = "Timer" style="display:inline"></p>
         <canvas id="a" width="500" height="375" tabeindex='1'>Your browser doesn't support Canvas</canvas>
+        Number of players: <p id = "playercount" style="display:inline"></p>
       </div>
     
       <div class ="six columns" style="margin-top:13%">
@@ -362,6 +363,10 @@
           {
             $('#Timer').text("GAME OVER");
           }
+        });
+
+        socket.on('playerCountUpdate', function(playerCounter){
+          $('#playercount').text(playerCounter);
         });
       }
 

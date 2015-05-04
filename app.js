@@ -50,6 +50,15 @@ var mouse = {
 	y: 50
 };
 
+var line = {
+	x: 0
+}
+
+var pow = {
+  		x: 250,
+  		y: 250
+  	}
+var lineClick = false;
 var queue = new Queue();
 var mousequeue = new Queue();
 var players = [];
@@ -95,6 +104,12 @@ var players = [];
 			}
 		})
 
+		socket.on('changeLine', function(msg) {
+			lineClick = true;
+			line.x = msg;
+			io.emit('addLine', msg);
+		});
+
 		socket.on('disconnect', function() {
 			console.log("disconnect");
 			var i = players.indexOf(socket);
@@ -122,13 +137,24 @@ http.listen(3000, function() {
 	console.log('listening on *:3000');
 });
 
+var firstPow = Math.floor((Math.random() * 10) + 105);
+console.log(firstPow);
 var start = new Date;
 setInterval(function() {
   var secondsLeft = 121 - ((new Date - start) / 1000);
   io.emit('updateTimer', secondsLeft);
+  console.log(secondsLeft)
   if (secondsLeft <= 0){
     console.log("GAME OVER - JERRY WINS!");
 	io.emit('clearCanvas', "JERRY");
+  }
+  else if(secondsLeft <= firstPow && secondsLeft >= firstPow-1)
+  {
+  	
+  	console.log("Sent powerup");
+  	pow.x = Math.floor((Math.random() * 500) + 1);
+  	pow.y = Math.floor((Math.random() * 375) + 1);
+  	io.emit("linePowerup", pow);
   }
 }, 1000);
 
@@ -219,6 +245,18 @@ setInterval(function(){
 	      	{
 	      		mouse.y = -75;
 	      	}
+
+	      	if (lineClick)
+            {
+              if(mouse.x + 400/3 > line.x - 15 && mouse.x + 400/3 < line.x)
+              {
+                mouse.x = line.x - 15 - 400/3;
+              }
+              else if(mouse.x > line.x && mouse.x < line.x + 15)
+              {
+                mouse.x = line.x + 15;
+              }
+            }
 	      	console.log(mouse);
 	      	var newmsg = {
 	      		mouse: mouse,

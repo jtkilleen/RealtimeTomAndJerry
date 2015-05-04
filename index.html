@@ -92,22 +92,8 @@
 
         // https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Advanced_animations
 
-        // var ball = {
-        //   x: 30,
-        //   y: 30,
-        //   vx: 8,
-        //   vy: 1,
-        //   radius: 25,
-        //   color: 'blue',
-        //   draw: function() {
-        //     context.beginPath();
-        //     context.arc(this.x, this.y, this.radius,0, Math.PI*2, true);
-        //     context.closePath();
-        //     context.fillStyle = this.color;
-        //     context.fill();
-        //   }
-        // };
         var socket = io();
+        var clicked = false;
         var gameover = false;
         var playerid;
         var counter = 1.0;
@@ -120,6 +106,33 @@
         var kittysizeheight = 360/2;
         var jerrysizewidth = 400/3;
         var jerrysizeheight = 194/3;
+        var line = {
+          x: 0,
+          y: 0,
+          draw: function() {
+            context.beginPath();
+            context.moveTo(this.x, 0);
+            context.lineTo(this.x , canvas.height);
+            context.stroke();
+           //console.log("CLICKED!")
+          }
+        }
+
+        var linePow = {
+          x:0,
+          y:0,
+          draw: function() {
+            context.beginPath();
+            context.arc(this.x, this.y, 10, 0, 2 * Math.PI, false);
+            context.fillStyle = 'green';
+            context.fill();
+            context.lineWidth = 5;
+            context.strokeStyle = '#003300';
+            context.stroke();
+          }
+        }
+        var linePowerShow = false;
+
         var kitten = {
           x: 30,
           y: 30,
@@ -162,15 +175,20 @@
           context.clearRect(0,0, canvas.width, canvas.height);
           if(!gameover)
           {
+            if (clicked)
+            {
+              line.draw();
+            }
+            
             kitten.draw();
             jerry.draw();
-            kitten.x += kitten.vx;
-            kitten.y += kitten.vy;
+            if(linePowerShow)
+            {
+              linePow.draw();
+            }
+            // kitten.x += kitten.vx;
+            // kitten.y += kitten.vy;
             // THIS DRAWS LINE BETWEEEN MOT's HAND to YRREJ's BODY
-            // context.beginPath();
-            // context.moveTo(kitten.x + kittysizewidth, kitten.y + kittysizeheight/3);
-            // context.lineTo(jerry.x + jerrysizewidth/2, jerry.y + jerrysizeheight/2);
-            // context.stroke();
             if(Math.sqrt(Math.pow((kitten.x + kittysizewidth - jerry.x - jerrysizewidth/2 - 5),2)+Math.pow((kitten.y + kittysizeheight/3 - jerry.y - jerrysizeheight/2),2)) < 25)
             {
               gameover = true;
@@ -178,6 +196,11 @@
             }
             else
             {
+              if(Math.sqrt(Math.pow((kitten.x + kittysizewidth - linePow.x),2)+Math.pow((kitten.y + kittysizeheight/3 - linePow.y),2)) < 25 && linePowerShow)
+              {
+                linePowerShow = false;
+                socket.emit('changeLine', jerry.x + jerrysizewidth + 20);
+              }
               raf = window.requestAnimationFrame(draw);
              }
           }
@@ -206,7 +229,7 @@
           location.reload();
         });
 
-        canvas.addEventListener('click', function() {
+        canvas.addEventListener('click', function(e) {
           if(gameover)
           {
             gameover = false;
@@ -216,13 +239,24 @@
           }
         });
 
-        // canvas.addEventListener('mouseout', function() {
-        //   window.cancelAnimationFrame(raf);
-        // });
-
-        window.addEventListener( "keydown", doKeyDown, true);
         
 
+        window.addEventListener( "keydown", doKeyDown, true);
+
+        socket.on('linePowerup', function(pow){
+          linePow.x = pow.x;
+          linePow.y = pow.y;
+          linePowerShow = true;
+          console.log("SET");
+        });
+
+        socket.on('addLine', function(msg)
+        {
+          clicked = true;
+          linePowerShow = false;
+          line.x = msg;
+        });
+        
         socket.on('getPlayerId', function(id){
           playerid = id;
         });
@@ -346,6 +380,7 @@
             context.font = "48px serif";
             context.strokeText("GAME OVER", 10, 50);
             context.strokeText(winner+" WINS", 10, 100);
+            context.endPath();
             //socket.emit("GAMEOVER", winner)
             //raf = window.requestAnimationFrame(drawGameOver(winner));
         });

@@ -58,10 +58,17 @@ var pow = {
   		x: 250,
   		y: 250
   	}
+var pow2 = {
+		x: 500,
+		y: 500
+}
 var lineClick = false;
 var queue = new Queue();
 var mousequeue = new Queue();
 var players = [];
+var powerUpVisible1 = false;
+var powerUpVisible2 = false;
+var laserBeamVisible = true;
 
     app.get('/', function (req, res) {
 	    res.sendFile(__dirname + '/index.html')
@@ -108,7 +115,15 @@ var players = [];
 			lineClick = true;
 			line.x = msg;
 			io.emit('addLine', msg);
+			powerUpVisible1 = false;
 		});
+
+		socket.on('lazor', function(){
+			console.log('emitted laser');
+			io.emit('showLaser');
+			powerUpVisible2 = false;
+			laserBeamVisible = true;
+		})
 
 		socket.on('disconnect', function() {
 			console.log("disconnect");
@@ -138,6 +153,7 @@ http.listen(3000, function() {
 });
 
 var firstPow = Math.floor((Math.random() * 10) + 105);
+var secondPow = Math.floor((Math.random() * 10) + 90);
 console.log(firstPow);
 var start = new Date;
 setInterval(function() {
@@ -148,13 +164,32 @@ setInterval(function() {
     console.log("GAME OVER - JERRY WINS!");
 	io.emit('clearCanvas', "JERRY");
   }
-  else if(secondsLeft <= firstPow && secondsLeft >= firstPow-1)
+  if(secondsLeft <= firstPow && secondsLeft >= firstPow-1)
   {
   	
   	console.log("Sent powerup");
   	pow.x = Math.floor((Math.random() * 500) + 1);
   	pow.y = Math.floor((Math.random() * 375) + 1);
+  	powerUpVisible1 = true;
   	io.emit("linePowerup", pow);
+  }
+  if(secondsLeft <= secondPow && secondsLeft >= secondPow-1)
+  {
+  	
+  	console.log("Sent powerup2");
+  	pow2.x = Math.floor((Math.random() * 500) + 1);
+  	pow2.y = Math.floor((Math.random() * 375) + 1);
+  	powerUpVisible2 = true;
+  	io.emit("laserPowerup", pow2);
+  }
+  if (powerUpVisible2){
+  	io.emit("laserPowerup", pow2);
+  }
+  if (powerUpVisible1){
+  	io.emit("linePowerup", pow);
+  }
+  if (laserBeamVisible){
+  	io.emit("showLaser");
   }
 }, 1000);
 

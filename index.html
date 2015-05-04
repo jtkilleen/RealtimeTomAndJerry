@@ -117,6 +117,16 @@
            //console.log("CLICKED!")
           }
         }
+        var laser = {
+          x: 0,
+          y: 0,
+          draw: function() {
+            context.beginPath();
+            context.moveTo(kitten.x-60 + kittysizewidth, kitten.y-20 + kittysizeheight/3);
+            context.lineTo(kitten.x-60 + kittysizewidth + 140, kitten.y-20 + kittysizeheight/3);
+            context.stroke();
+          }
+        }
 
         var linePow = {
           x:0,
@@ -131,7 +141,23 @@
             context.stroke();
           }
         }
+
+        var laserPow = {
+          x:0,
+          y:0,
+          draw: function() {
+            context.beginPath();
+            context.arc(this.x, this.y, 10, 0, 2 * Math.PI, false);
+            context.fillStyle = 'red';
+            context.fill();
+            context.lineWidth = 5;
+            context.strokeStyle = '#003300';
+            context.stroke();
+          }
+        }
         var linePowerShow = false;
+        var laserBeamShow = false;
+        var laserPowerShow = false;
 
         var kitten = {
           x: 30,
@@ -182,27 +208,42 @@
             
             kitten.draw();
             jerry.draw();
+            if (laserPowerShow){
+              laserPow.draw();
+            }
+            if (laserBeamShow){
+              laser.draw();
+            }
             if(linePowerShow)
             {
               linePow.draw();
             }
             // kitten.x += kitten.vx;
-            // kitten.y += kitten.vy;
+            // kitaaten.y += kitten.vy;
             // THIS DRAWS LINE BETWEEEN MOT's HAND to YRREJ's BODY
             if(Math.sqrt(Math.pow((kitten.x + kittysizewidth - jerry.x - jerrysizewidth/2 - 5),2)+Math.pow((kitten.y + kittysizeheight/3 - jerry.y - jerrysizeheight/2),2)) < 25)
             {
               gameover = true;
               socket.emit("GAMEOVER", 'TOM');
             }
-            else
+            else if ((jerry.y > (kitten.y-20 + kittysizeheight/3) - 30) && (jerry.y < (kitten.y-20 + kittysizeheight/3) + 30) && (jerry.x > kitten.x-60 + kittysizewidth) && (jerry.x < kitten.y-20 + kittysizeheight/3) ){
+              gameover = true;
+              socket.emit("GAMEOVER", 'TOM');
+            }
+            if (Math.sqrt(Math.pow((kitten.x + kittysizewidth - laserPow.x),2)+Math.pow((kitten.y + kittysizeheight/3 - laserPow.y),2)) < 25 && laserPowerShow){
+              laserPowerShow = false;
+              console.log('Picked laser');
+              socket.emit('lazor');
+            }
             {
               if(Math.sqrt(Math.pow((kitten.x + kittysizewidth - linePow.x),2)+Math.pow((kitten.y + kittysizeheight/3 - linePow.y),2)) < 25 && linePowerShow)
               {
                 linePowerShow = false;
                 socket.emit('changeLine', jerry.x + jerrysizewidth + 20);
               }
+
               raf = window.requestAnimationFrame(draw);
-             }
+            }
           }
           
         }
@@ -229,6 +270,11 @@
           location.reload();
         });
 
+        socket.on('showLaser', function(){
+          console.log("HERE!");
+          laserBeamShow = true;
+        })
+
         canvas.addEventListener('click', function(e) {
           if(gameover)
           {
@@ -248,6 +294,13 @@
           linePow.y = pow.y;
           linePowerShow = true;
           console.log("SET");
+        });
+
+        socket.on('laserPowerup', function(pow2){
+          laserPow.x = pow2.x;
+          laserPow.y = pow2.y;
+          laserPowerShow = true;
+          console.log("SET2");
         });
 
         socket.on('addLine', function(msg)

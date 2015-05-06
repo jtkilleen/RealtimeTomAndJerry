@@ -57,6 +57,26 @@
       </div>
 
     </div>
+    
+    <div class="row">
+      
+      <div class="twelve columns">
+        
+        <h3>Instructions</h3>
+        
+        <p>1. Jerry wins when the timer runs out.</p>
+        <p>2. Tom wins when his hand touches Jerry.</p>
+        <p>3. Tom can get the following power ups:</p>
+        <br></br>
+        <ul>
+          <li>Red-Laser that adds range</li>
+          <li>Green-Created a wall that blocks Jerry</li>
+          <li>Blue-Adds a laser and increases Tom's speed.</li>
+        </ul>
+        
+      </div>
+      
+    </div>
 
   </div>
 
@@ -528,9 +548,6 @@
         return false;
       });
       socket.on('chat message', function(msg){
-        /*
-        var userName = $('#username').val();
-        var completeMessage = userName + ": " + msg;*/
         $('#messages').prepend($('<li>').text(msg));
       });
 

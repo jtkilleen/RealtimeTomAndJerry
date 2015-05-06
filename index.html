@@ -155,9 +155,25 @@
             context.stroke();
           }
         }
+
+        var speedPow = {
+          x:0,
+          y:0,
+          draw: function() {
+            context.beginPath();
+            context.arc(this.x, this.y, 10, 0, 2 * Math.PI, false);
+            context.fillStyle = 'blue';
+            context.fill();
+            context.lineWidth = 5;
+            context.strokeStyle = '#003300';
+            context.stroke();
+          }
+        }
         var linePowerShow = false;
         var laserBeamShow = false;
         var laserPowerShow = false;
+        var speedPowerShow = false;
+        var speedPower = false;
 
         var kitten = {
           x: 30,
@@ -218,6 +234,9 @@
             {
               linePow.draw();
             }
+            if(speedPowerShow){
+              speedPow.draw();
+            }
             // kitten.x += kitten.vx;
             // kitaaten.y += kitten.vy;
             // THIS DRAWS LINE BETWEEEN MOT's HAND to YRREJ's BODY
@@ -226,7 +245,9 @@
               gameover = true;
               socket.emit("GAMEOVER", 'TOM');
             }
-            else if ((jerry.y > (kitten.y-20 + kittysizeheight/3) - 30) && (jerry.y < (kitten.y-20 + kittysizeheight/3) + 30) && (jerry.x > kitten.x-60 + kittysizewidth) && (jerry.x < kitten.y-20 + kittysizeheight/3) ){
+            //Check if laser is touching
+            else if (laserBeamShow && (jerry.y > (kitten.y-20 + kittysizeheight/3) - 30) && (jerry.y < (kitten.y-20 + kittysizeheight/3) + 30) && (jerry.x > kitten.x-60 + kittysizewidth) && (jerry.x < kitten.x-60 + kittysizewidth + 140)){
+              console.log("Died by laser")
               gameover = true;
               socket.emit("GAMEOVER", 'TOM');
             }
@@ -234,6 +255,11 @@
               laserPowerShow = false;
               console.log('Picked laser');
               socket.emit('lazor');
+            }
+            if (Math.sqrt(Math.pow((kitten.x + kittysizewidth - speedPow.x),2)+Math.pow((kitten.y + kittysizeheight/3 - speedPow.y),2)) < 25 && speedPowerShow){
+              speedPowerShow = false;
+              console.log('Picked speed');
+              socket.emit('speed');
             }
             {
               if(Math.sqrt(Math.pow((kitten.x + kittysizewidth - linePow.x),2)+Math.pow((kitten.y + kittysizeheight/3 - linePow.y),2)) < 25 && linePowerShow)
@@ -301,6 +327,13 @@
           laserPow.y = pow2.y;
           laserPowerShow = true;
           console.log("SET2");
+        });
+
+        socket.on('speedPowerup', function(pow3){
+          speedPow.x = pow3.x;
+          speedPow.y = pow3.y;
+          speedPowerShow = true;
+          console.log("SET3");
         });
 
         socket.on('addLine', function(msg)

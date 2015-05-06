@@ -66,9 +66,12 @@ var lineClick = false;
 var queue = new Queue();
 var mousequeue = new Queue();
 var players = [];
+var lineVisible = false;
 var powerUpVisible1 = false;
 var powerUpVisible2 = false;
-var laserBeamVisible = true;
+var powerUpVisible3 = false;
+var speedPowerUp = false;
+var laserBeamVisible = false;
 
     app.get('/', function (req, res) {
 	    res.sendFile(__dirname + '/index.html')
@@ -116,6 +119,7 @@ var laserBeamVisible = true;
 			line.x = msg;
 			io.emit('addLine', msg);
 			powerUpVisible1 = false;
+			lineVisible = true;
 		});
 
 		socket.on('lazor', function(){
@@ -123,7 +127,13 @@ var laserBeamVisible = true;
 			io.emit('showLaser');
 			powerUpVisible2 = false;
 			laserBeamVisible = true;
-		})
+		});
+
+		socket.on('speed', function(){
+			console.log('emitted speed');
+			powerUpVisible3 = false;
+			speedPowerUp = true;
+		});
 
 		socket.on('disconnect', function() {
 			console.log("disconnect");
@@ -153,7 +163,8 @@ http.listen(3000, function() {
 });
 
 var firstPow = Math.floor((Math.random() * 10) + 105);
-var secondPow = Math.floor((Math.random() * 10) + 90);
+var secondPow = Math.floor((Math.random() * 10) + 80);
+var thirdPow = Math.floor((Math.random() * 10) + 30);
 console.log(firstPow);
 var start = new Date;
 setInterval(function() {
@@ -182,6 +193,18 @@ setInterval(function() {
   	powerUpVisible2 = true;
   	io.emit("laserPowerup", pow2);
   }
+  if(secondsLeft <= thirdPow && secondsLeft >= thirdPow-1)
+  {
+  	
+  	console.log("Sent powerup3");
+  	pow2.x = Math.floor((Math.random() * 500) + 1);
+  	pow2.y = Math.floor((Math.random() * 375) + 1);
+  	powerUpVisible3 = true;
+  	io.emit("speedPowerup", pow2);
+  }
+  if (lineVisible){
+  	io.emit("addLine", line.x);
+  }
   if (powerUpVisible2){
   	io.emit("laserPowerup", pow2);
   }
@@ -194,7 +217,57 @@ setInterval(function() {
 }, 1000);
 
 setInterval(function(){
-		if (queue.peek() != undefined){
+		if (queue.peek() != undefined && speedPowerUp){
+			console.log("Sped up!")
+			var msg2 = queue.dequeue();
+			console.log(msg2);
+			cat.x = msg2.x;
+			cat.y = msg2.y;
+			if(msg2.key == 87)
+	      	{
+	      	 cat.y = msg2.y - 20;
+	      	}
+	      	if(msg2.key == 68)
+	      	{
+	      	  cat.x = msg2.x + 20;
+	      	}
+	      	if(msg2.key == 65)
+	      	{
+	      	  cat.x = msg2.x - 20;
+	      	}
+	      	if(msg2.key == 83)
+	      	{
+	      	  cat.y = msg2.y + 20;
+	      	}
+	      	if(cat.x > 500)
+	      	{
+	      		cat.x = -250;
+	      	}
+	      	else if(cat.x < -250)
+	      	{
+	      		cat.x = 500
+	      	}
+	      	if(cat.y < -180)
+	      	{
+	      		cat.y = 375
+	      	}
+	      	else if(cat.y > 375)
+	      	{
+	      		cat.y = -180;
+	      	}
+	      	console.log(cat);
+	      	var newmsg = {
+	      		cat: cat,
+	      		key: msg2.key
+	      	};
+			io.emit('movement', newmsg)
+			if (queue.peek() != undefined){
+				io.emit('lookahead', queue.peek());
+			} else{
+				io.emit('lookahead', "nothing");
+			}
+		}
+		else if (queue.peek() != undefined){
 			var msg2 = queue.dequeue();
 			console.log(msg2);
 			cat.x = msg2.x;

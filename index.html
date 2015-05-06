@@ -139,6 +139,7 @@
             context.lineWidth = 5;
             context.strokeStyle = '#003300';
             context.stroke();
+            context.fillStyle = 'black';
           }
         }
 
@@ -153,6 +154,7 @@
             context.lineWidth = 5;
             context.strokeStyle = '#003300';
             context.stroke();
+            context.fillStyle = 'black';
           }
         }
 
@@ -167,6 +169,7 @@
             context.lineWidth = 5;
             context.strokeStyle = '#003300';
             context.stroke();
+            context.fillStyle = 'black';
           }
         }
         var linePowerShow = false;
@@ -214,15 +217,16 @@
         raf = window.requestAnimationFrame(draw);
 
         function draw() {
-          context.clearRect(0,0, canvas.width, canvas.height);
           if(!gameover)
           {
+            
+            context.clearRect(0,0, canvas.width, canvas.height);
+            kitten.draw();
+            jerry.draw();
             if (clicked)
             {
               line.draw();
             }
-            kitten.draw();
-            jerry.draw();
             if (laserPowerShow){
               laserPow.draw();
             }
@@ -321,8 +325,6 @@
           {
             gameover = false;
             socket.emit("RESET");
-            //setup();
-            //location.reload();
           }
         });
 
@@ -478,6 +480,7 @@
           gameover = true
           context.clearRect(0,0, canvas.width, canvas.height);
           context.beginPath();
+          context.fillStyle = 'black'
           context.font = "48px serif";
           context.strokeText("GAME OVER", 10, 50);
           context.strokeText(winner+" WINS", 10, 100);

@@ -104,7 +104,21 @@ var laserBeamVisible = false;
 
 		socket.on('GAMEOVER', function(player)
 		{
-			
+			cat.x = 30;
+			cat.y = 30;
+			mouse.x = 50;
+			mouse.y = 50;
+			var startmsg = {
+				cat: cat,
+				mouse: mouse
+			}
+			lineClick = false;
+			lineVisible = false;
+			powerUpVisible2 = false;
+			powerUpVisible1 = false;
+			powerUpVisible3 = false;
+			laserBeamVisible = false;
+			speedPowerUp = false;
 			if(player === "TOM")
 			{
 				io.emit('clearCanvas', "TOM");
@@ -148,22 +162,10 @@ var laserBeamVisible = false;
 		});
 
 		socket.on('RESET', function() {
-			cat.x = 30;
-			cat.y = 30;
-			mouse.x = 50;
-			mouse.y = 50;
-			var startmsg = {
-				cat: cat,
-				mouse: mouse
-			}
+			
 			start = new Date;
-			lineVisible = false;
-			powerUpVisible2 = false;
-			powerUpVisible1 = false;
-			powerUpVisible3 = false;
-			laserBeamVisible = false;
-			speedPowerUp = false;
-			socket.emit('restart', startmsg);
+			
+			io.emit('restart', startmsg);
 		});
 	});
 
@@ -182,6 +184,21 @@ setInterval(function() {
   console.log(secondsLeft)
   if (secondsLeft <= 0){
     console.log("GAME OVER - JERRY WINS!");
+    cat.x = 30;
+			cat.y = 30;
+			mouse.x = 50;
+			mouse.y = 50;
+			var startmsg = {
+				cat: cat,
+				mouse: mouse
+			}
+			lineClick = false;
+			lineVisible = false;
+			powerUpVisible2 = false;
+			powerUpVisible1 = false;
+			powerUpVisible3 = false;
+			laserBeamVisible = false;
+			speedPowerUp = false;
 	io.emit('clearCanvas', "JERRY");
   }
   if(secondsLeft <= firstPow && secondsLeft >= firstPow-1)

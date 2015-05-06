@@ -301,9 +301,20 @@
         });
 
         socket.on('showLaser', function(){
-          console.log("HERE!");
+          //console.log("HERE!");
           laserBeamShow = true;
-        })
+          laserPowerShow = false;
+        });
+
+
+        socket.on('linePicked', function(){
+          linePowerShow = false;
+        });
+
+        socket.on('speedPicked', function(){
+          speedPowerShow = false;
+        });
+
 
         canvas.addEventListener('click', function(e) {
           if(gameover)
@@ -471,6 +482,11 @@
           context.strokeText("GAME OVER", 10, 50);
           context.strokeText(winner+" WINS", 10, 100);
           context.endPath();
+          var linePowerShow = false;
+          var laserBeamShow = false;
+          var laserPowerShow = false;
+          var speedPowerShow = false;
+          var speedPower = false;
             //socket.emit("GAMEOVER", winner)
             //raf = window.requestAnimationFrame(drawGameOver(winner));
         });

@@ -121,6 +121,7 @@ var laserBeamVisible = false;
 			io.emit('addLine', msg);
 			powerUpVisible1 = false;
 			lineVisible = true;
+			io.emit("linePicked");
 		});
 
 		socket.on('lazor', function(){
@@ -134,6 +135,7 @@ var laserBeamVisible = false;
 			console.log('emitted speed');
 			powerUpVisible3 = false;
 			speedPowerUp = true;
+			io.emit("speedPicked");
 		});
 
 		socket.on('disconnect', function() {

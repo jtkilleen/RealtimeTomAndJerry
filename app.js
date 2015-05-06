@@ -104,7 +104,8 @@ var laserBeamVisible = false;
 
 		socket.on('GAMEOVER', function(player)
 		{
-			if(player == "TOM")
+			
+			if(player === "TOM")
 			{
 				io.emit('clearCanvas', "TOM");
 			}
@@ -154,6 +155,12 @@ var laserBeamVisible = false;
 				mouse: mouse
 			}
 			start = new Date;
+			lineVisible = false;
+			powerUpVisible2 = false;
+			powerUpVisible1 = false;
+			powerUpVisible3 = false;
+			laserBeamVisible = false;
+			speedPowerUp = false;
 			socket.emit('restart', startmsg);
 		});
 	});

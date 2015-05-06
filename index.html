@@ -221,7 +221,6 @@
             {
               line.draw();
             }
-            
             kitten.draw();
             jerry.draw();
             if (laserPowerShow){
@@ -261,7 +260,6 @@
               console.log('Picked speed');
               socket.emit('speed');
             }
-            {
               if(Math.sqrt(Math.pow((kitten.x + kittysizewidth - linePow.x),2)+Math.pow((kitten.y + kittysizeheight/3 - linePow.y),2)) < 25 && linePowerShow)
               {
                 linePowerShow = false;
@@ -269,7 +267,7 @@
               }
 
               raf = window.requestAnimationFrame(draw);
-            }
+            
           }
           
         }
@@ -293,6 +291,12 @@
           jerry.y = msg.mouse.y;
           kitten.x = msg.cat.x;
           kitten.y = msg.cat.y;
+
+          clicked = false;
+          laserBeamShow = false;
+          laserPowerShow = false;
+          linePowerShow = false;
+          speedPowerShow = false;
           location.reload();
         });
 
@@ -463,10 +467,10 @@
           gameover = true
           context.clearRect(0,0, canvas.width, canvas.height);
           context.beginPath();
-            context.font = "48px serif";
-            context.strokeText("GAME OVER", 10, 50);
-            context.strokeText(winner+" WINS", 10, 100);
-            context.endPath();
+          context.font = "48px serif";
+          context.strokeText("GAME OVER", 10, 50);
+          context.strokeText(winner+" WINS", 10, 100);
+          context.endPath();
             //socket.emit("GAMEOVER", winner)
             //raf = window.requestAnimationFrame(drawGameOver(winner));
         });
